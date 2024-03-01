@@ -3,10 +3,11 @@ import { StyleSheet } from "react-native";
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
 import { SafeAreaView } from "react-native-safe-area-context";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Circle, Marker } from "react-native-maps";
 import { useEffect, useRef, useState } from "react";
 import { useUserSelector, useStateSelector } from "@/context/userContext";
 import socket from "@/context/socket";
+import axios from "axios";
 
 export default function Map() {
   const mapRef = useRef<MapView>(null);
@@ -14,6 +15,7 @@ export default function Map() {
   const { user } = useUserSelector();
   const [nearbyUser, setNearByUser] = useState([]);
   const [administration, setAdministration] = useState([]);
+  const [SOSDetails, setSOSDetails] = useState([]);
 
   // (async () => {
   //   while (true) {
@@ -39,12 +41,23 @@ export default function Map() {
     });
   }, []);
 
+  const getSOSDetails = async () => {
+    const response = await axios.get(
+      `https://backend-6q2l.onrender.com/api/v1/sos/active_sos`
+    );
+    setSOSDetails(response.data.data);
+  };
+
   useEffect(() => {
     socket.on("SEND_ADMINISTRATIONS", (data) => {
       setAdministration(data);
-      // console.log(data);
+      console.log(data);
     });
-  });
+
+    getSOSDetails();
+
+    socket.on("Refetch_SOS_Details", getSOSDetails);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -63,9 +76,9 @@ export default function Map() {
         >
           <Marker coordinate={location} />
           {nearbyUser &&
-            nearbyUser.map((user) => {
+            nearbyUser.map((user, index) => {
               return (
-                <Marker coordinate={user.location}>
+                <Marker coordinate={user.location} key={`user-${index}`}>
                   <View className="px-2 py-2">
                     <Text>{user.username}</Text>
                   </View>
@@ -83,6 +96,18 @@ export default function Map() {
                 </Marker>
               );
             })} */}
+          {SOSDetails?.map((sos, index) => {
+            return (
+              <Circle
+                center={sos.coordinates}
+                radius={120}
+                fillColor={"rgba(255,0,0,0.05)"}
+                strokeColor={"rgba(255,0,0,0.0)"}
+                strokeWidth={0}
+                key={index}
+              />
+            );
+          })}
         </MapView>
       </View>
     </SafeAreaView>

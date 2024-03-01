@@ -15,6 +15,8 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 const alerts = () => {
   const [allAlerts, setAllAlerts] = useState([]);
+  const [isVisible, setIsVisible] = useState(false);
+  const [acceptedUsers, setAcceptedUsers] = useState({});
 
   const { user } = useUserSelector();
 
@@ -23,7 +25,7 @@ const alerts = () => {
       console.log("Called");
       try {
         const response = await axios.get(
-          `http://192.168.0.110:5500/api/v1/sos/active_sos/${user?._id}`
+          `https://backend-6q2l.onrender.com/api/v1/sos/active_sos/${user?._id}`
         );
         console.log("Log", response.data.data);
         setAllAlerts(response.data.data);
@@ -63,7 +65,7 @@ const alerts = () => {
           </Text>
         </View>
         <View>
-          {user?._id == alert.owner_id ? (
+          {user?._id != alert.owner_id ? (
             <>
               <TouchableOpacity
                 onPress={() => getDirection(alert.coordinates)}
@@ -76,7 +78,12 @@ const alerts = () => {
               </TouchableOpacity>
             </>
           ) : (
-            <TouchableOpacity className="p-4 w-[100%] bg-amber-500 rounded-md mt-4 flex flex-row items-center justify-center">
+            <TouchableOpacity
+              className="p-4 w-[100%] bg-amber-500 rounded-md mt-4 flex flex-row items-center justify-center"
+              onPress={() => {
+                setIsVisible(!isVisible);
+              }}
+            >
               <Text className="text-white text-center font-bold text-base mr-2">
                 Accepted Users
               </Text>
@@ -86,8 +93,6 @@ const alerts = () => {
       </View>
     );
   };
-
-  const isVisible = false;
 
   return (
     <>
@@ -104,7 +109,11 @@ const alerts = () => {
           </ScrollView>
         )}
       </View>
-      <Modal animationType="slide" transparent={true} visible={isVisible} />
+      <Modal animationType="fade" transparent={true} visible={isVisible}>
+        <View className="flex-1 justify-center items-center">
+          <View className="w-[70%] h-auto"></View>
+        </View>
+      </Modal>
     </>
   );
 };

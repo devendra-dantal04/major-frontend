@@ -5,6 +5,6 @@ const options = {
   origin: "*",
 };
 
-const socket = io("http://192.168.0.110:5500", options);
+const socket = io("https://backend-6q2l.onrender.com", options);
 
 export default socket;

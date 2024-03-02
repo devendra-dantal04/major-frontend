@@ -48,7 +48,7 @@ const alerts = () => {
     return (
       <View
         key={`${alert.username}-${alert._id}`}
-        className="w-[85vw] min-h-[160px] bg-amber-400 p-6 rounded-lg mb-3"
+        className="w-[85vw] min-h-[160px] bg-amber-50 p-6 rounded-lg mb-3"
       >
         <View>
           <Text className="text-base font-semibold">
@@ -69,9 +69,9 @@ const alerts = () => {
             <>
               <TouchableOpacity
                 onPress={() => getDirection(alert.coordinates)}
-                className="p-4 w-[100%] bg-amber-500 rounded-md mt-4 flex flex-row items-center justify-center"
+                className="p-4 w-[100%] bg-amber-100 rounded-md mt-4 flex flex-row items-center justify-center"
               >
-                <Text className="text-white text-center font-bold text-base mr-2">
+                <Text className="text-white text-center font-semibold text-base mr-2">
                   Get Direction
                 </Text>
                 <FontAwesome5 name="directions" size={22} color="white" />
@@ -79,12 +79,12 @@ const alerts = () => {
             </>
           ) : (
             <TouchableOpacity
-              className="p-4 w-[100%] bg-amber-500 rounded-md mt-4 flex flex-row items-center justify-center"
+              className="p-4 w-[100%] bg-amber-200 rounded-md mt-4 flex flex-row items-center justify-center"
               onPress={() => {
                 setIsVisible(!isVisible);
               }}
             >
-              <Text className="text-white text-center font-bold text-base mr-2">
+              <Text className="text-black text-center font-semibold text-base mr-2">
                 Accepted Users
               </Text>
             </TouchableOpacity>

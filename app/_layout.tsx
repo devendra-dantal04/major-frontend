@@ -77,6 +77,10 @@ function RootLayoutNav() {
               name="(auth)/basic"
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="(pages)/geofence"
+              options={{ headerShown: false }}
+            />
             <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           </Stack>
         </ThemeProvider>

@@ -82,6 +82,10 @@ function RootLayoutNav() {
               options={{ headerShown: false }}
             />
             <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+            <Stack.Screen
+              name="(pages)/chatbot"
+              options={{ presentation: "modal" }}
+            />
           </Stack>
         </ThemeProvider>
       </StateContextProvider>

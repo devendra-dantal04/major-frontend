@@ -56,6 +56,15 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="bell-o" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="posts"
+        options={{
+          title: "Posts",
+          headerShown: false,
+          headerTitleAlign: "center",
+          tabBarIcon: ({ color }) => <TabBarIcon name="magic" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

@@ -10,6 +10,8 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 
+import { Link } from "expo-router";
+
 const sos = () => {
   const { user } = useUserSelector();
   const { location, isSocketConnected } = useStateSelector();
@@ -49,7 +51,7 @@ const sos = () => {
 
   return (
     <SafeAreaView>
-      <View className="flex-1 p-8 items-center">
+      <View className="flex-1 p-8 items-center relative">
         <View className="border-4 border-red-500 p-2 w-[200px] h-[200px] rounded-full">
           <TouchableOpacity
             className="h-full w-full rounded-full bg-red-600 items-center justify-center"
@@ -57,6 +59,9 @@ const sos = () => {
           >
             <Text className="text-white text-2xl font-bold">SOS</Text>
           </TouchableOpacity>
+        </View>
+        <View className="absolute right-2 top-2">
+          <Link href={"/(pages)/chatbot"}>Go to Chatbot</Link>
         </View>
         <View className="mt-6 h-[90px]">
           <View className="flex flex-row gap-3">

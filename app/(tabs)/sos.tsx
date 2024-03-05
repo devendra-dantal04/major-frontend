@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useStateSelector, useUserSelector } from "@/context/userContext";
-import * as SMS from "expo-sms";
+
 import socket from "@/context/socket";
 import {
   Ionicons,
@@ -11,6 +11,7 @@ import {
 } from "@expo/vector-icons";
 
 import { Link } from "expo-router";
+import { sendSMSAsync } from "expo-sms";
 
 const sos = () => {
   const { user } = useUserSelector();
@@ -19,9 +20,7 @@ const sos = () => {
   const [accepted_count, setAccepted_count] = useState(0);
 
   const SendSMS = (emergency_contact: string[], message: string) => {
-    SMS.sendSMSAsync(emergency_contact, message).catch((err) =>
-      console.error(err)
-    );
+    sendSMSAsync(emergency_contact, message).catch((err) => console.error(err));
   };
 
   const InitSOS = (description: string) => {
@@ -45,6 +44,7 @@ const sos = () => {
       },${data.coordinates.longitude}.\n Send at ${new Date(
         data.time
       ).toLocaleString()}`;
+
       SendSMS(emergency_contact, message);
     });
   };
@@ -55,7 +55,10 @@ const sos = () => {
         <View className="border-4 border-red-500 p-2 w-[200px] h-[200px] rounded-full">
           <TouchableOpacity
             className="h-full w-full rounded-full bg-red-600 items-center justify-center"
-            onPress={() => InitSOS("general")}
+            onPress={() => {
+              console.log("Running SOS");
+              InitSOS("general");
+            }}
           >
             <Text className="text-white text-2xl font-bold">SOS</Text>
           </TouchableOpacity>

@@ -22,12 +22,11 @@ const alerts = () => {
 
   useEffect(() => {
     const getSOSDetails = async () => {
-      console.log("Called");
       try {
         const response = await axios.get(
           `https://backend-6q2l.onrender.com/api/v1/sos/active_sos/${user?._id}`
         );
-        console.log("Log", response.data.data);
+
         setAllAlerts(response.data.data);
       } catch (err) {
         console.log(err);
@@ -47,7 +46,7 @@ const alerts = () => {
   const AlertCard = ({ alert }) => {
     return (
       <View
-        key={`${alert.username}-${alert._id}`}
+        key={`${alert.username}-${alert._id}-2`}
         className="w-[85vw] min-h-[160px] bg-amber-50 p-6 rounded-lg mb-3"
       >
         <View>
@@ -104,7 +103,7 @@ const alerts = () => {
         ) : (
           <ScrollView className="flex-1 p-4">
             {allAlerts.map((alert) => (
-              <AlertCard alert={alert} />
+              <AlertCard alert={alert} key={`alert-${alert._id}`} />
             ))}
           </ScrollView>
         )}

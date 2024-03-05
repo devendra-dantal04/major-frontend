@@ -1,19 +1,13 @@
 import { StyleSheet } from "react-native";
 
-import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
 import { SafeAreaView } from "react-native-safe-area-context";
-import MapView, { Circle, Marker } from "react-native-maps";
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUserSelector, useStateSelector } from "@/context/userContext";
 import socket from "@/context/socket";
 import axios from "axios";
-import BottomSheet, {
-  BottomSheetModal,
-  BottomSheetView,
-  BottomSheetModalProvider,
-  BottomSheetFlatList,
-} from "@gorhom/bottom-sheet";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FontAwesome } from "@expo/vector-icons";
 
@@ -65,6 +59,8 @@ export default function Map() {
       // console.log(data);
     });
 
+    socket.on("Send_Notification", (data) => console.log("Data ", data));
+
     getSOSDetails();
 
     socket.on("Refetch_SOS_Details", getSOSDetails);
@@ -83,6 +79,7 @@ export default function Map() {
       <SafeAreaView style={styles.container}>
         <View style={{ height: "100%", width: "100%" }}>
           <MapView
+            provider={PROVIDER_GOOGLE}
             ref={mapRef}
             style={{ height: "100%", width: "100%", flex: 1, zIndex: 0 }}
             zoomControlEnabled
@@ -120,8 +117,8 @@ export default function Map() {
               return (
                 <Circle
                   center={sos.coordinates}
-                  radius={120}
-                  fillColor={"rgba(255,0,0,0.05)"}
+                  radius={500}
+                  fillColor={"rgba(255,0,0,0.1)"}
                   strokeColor={"rgba(255,0,0,0.0)"}
                   strokeWidth={0}
                   key={index}

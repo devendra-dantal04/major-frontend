@@ -6,10 +6,12 @@ import { Link } from "expo-router";
 import socket from "@/context/socket";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { sendSMSAsync } from "expo-sms";
 
 export default function TabTwoScreen() {
   function initiateSOS() {
     socket.emit("INITIATE_SOS");
+    sendSMSAsync(["12323232323"], "devendra");
   }
 
   return (

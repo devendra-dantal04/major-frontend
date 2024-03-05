@@ -37,6 +37,7 @@ export default function Page() {
   const handleSubmit = async () => {
     // TODO: check all the fields are not empty
     // TODO: Login the user
+    console.log("Hello");
     try {
       const { data: response } = await axios.post(
         "https://backend-6q2l.onrender.com/api/v1/login",
@@ -49,9 +50,10 @@ export default function Page() {
           },
         }
       );
+      
 
       if (response.success) {
-        console.log("HEllo", response.data);
+        
         setUser(response.data);
         await AsyncStorage.setItem("user", JSON.stringify(response.data));
         socket.emit("SET_ACTIVE_USER", response.data._id);

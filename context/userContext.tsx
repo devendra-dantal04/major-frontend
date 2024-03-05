@@ -145,7 +145,7 @@ export const StateContextProvider: React.FC<{ children: React.ReactNode }> = ({
         {
           accuracy: Location.Accuracy.High,
           timeInterval: 5000,
-          distanceInterval: 20,
+          distanceInterval: 100,
         },
         ({ coords }) => {
           setLocation({

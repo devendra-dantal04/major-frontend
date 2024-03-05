@@ -7,13 +7,23 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useColorScheme } from "@/components/useColorScheme";
 import {
   StateContextProvider,
   UserContextProvider,
 } from "@/context/userContext";
 import * as Location from "expo-location";
+import * as Notifications from "expo-notifications";
+import socket from "@/context/socket";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -48,6 +58,18 @@ export default function RootLayout() {
         return alert("Grant permission to access your location");
         return;
       }
+
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("You have to enable notification to get the alerts");
+        return;
+      }
     })();
   }, [loaded]);
 
@@ -60,6 +82,35 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        console.log(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("Send_Notification", async (details) => {
+      console.log("notification received");
+      await schedulePushNotification(details);
+    });
+    return () => socket.off("Send_Notification");
+  }, []);
 
   return (
     <UserContextProvider>
@@ -91,4 +142,16 @@ function RootLayoutNav() {
       </StateContextProvider>
     </UserContextProvider>
   );
+}
+
+async function schedulePushNotification(details) {
+  console.log(details);
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "I am in danger",
+      body: `Sent by ${details.name}`,
+      data: { data: "goes here" },
+    },
+    trigger: { seconds: 2 },
+  });
 }

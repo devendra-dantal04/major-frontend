@@ -18,6 +18,7 @@ export default function Map() {
   const [nearbyUser, setNearByUser] = useState([]);
   const [administration, setAdministration] = useState([]);
   const [SOSDetails, setSOSDetails] = useState([]);
+  const [isActiveSOS, setIsActiveSOS] = useState(null);
 
   // variables
   const snapPoints = useMemo(() => ["50%", "90%"], []);
@@ -49,6 +50,7 @@ export default function Map() {
     const response = await axios.get(
       `https://backend-6q2l.onrender.com/api/v1/sos/active_sos`
     );
+    console.log(response.data.data);
     setSOSDetails(response.data.data);
   };
 

@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useStateSelector, useUserSelector } from "@/context/userContext";
 
@@ -12,27 +12,77 @@ import {
 
 import { Link } from "expo-router";
 import { sendSMSAsync } from "expo-sms";
+import { Audio } from "expo-av";
+import axios from "axios";
 
 const sos = () => {
   const { user } = useUserSelector();
   const { location, isSocketConnected } = useStateSelector();
   const [isSOS, setIsSOS] = useState(false);
   const [accepted_count, setAccepted_count] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [sound, setSound] = useState();
+
+  const playSound = async () => {
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("../../assets/sos.mp3")
+    );
+    setSound(sound);
+
+    if (isPlaying) {
+      sound.stopAsync();
+    } else {
+      await sound.setIsLoopingAsync(true);
+      await sound.playAsync();
+    }
+    setIsPlaying(!isPlaying);
+
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true,
+      // staysActiveInBackground: true,
+    });
+  };
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log("Unloading Sound");
+          sound?.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
+  const activeSOS = async () => {
+    const response = await axios.get(
+      `https://backend-6q2l.onrender.com/api/v1/sos/active_sos/${user?._id}`
+    );
+    if (Array.from(response.data.data).length > 0) {
+      setIsSOS(true);
+    }
+  };
+
+  useEffect(() => {
+    activeSOS();
+  }, [user]);
 
   const SendSMS = (emergency_contact: string[], message: string) => {
     sendSMSAsync(emergency_contact, message).catch((err) => console.error(err));
   };
 
-  const InitSOS = (description: string) => {
+  const InitSOS = (description: string, sosId?: string) => {
     if (!isSocketConnected || user == null) return;
     setIsSOS(!isSOS);
     const { emergency_contact } = user;
     if (isSOS) {
       setAccepted_count(0);
-      return socket.emit("SOS_Cancel", (data) => {
+      return socket.emit("SOS_Cancel", sosId, (data) => {
         if (data.err) return alert(data.msg);
         const message = `I am ${data} and I am not in danger anymore.`;
         SendSMS(emergency_contact, message);
+        setIsSOS(false);
       });
     }
     socket.emit("INITIATE_SOS", description, (data) => {
@@ -45,6 +95,7 @@ const sos = () => {
         data.time
       ).toLocaleString()}`;
 
+      setIsSOS(true);
       SendSMS(emergency_contact, message);
     });
   };
@@ -56,11 +107,12 @@ const sos = () => {
           <TouchableOpacity
             className="h-full w-full rounded-full bg-red-600 items-center justify-center"
             onPress={() => {
-              console.log("Running SOS");
               InitSOS("general");
             }}
           >
-            <Text className="text-white text-2xl font-bold">SOS</Text>
+            <Text className="text-white text-2xl font-bold">
+              {isSOS ? "Cancel SOS" : "SOS"}
+            </Text>
           </TouchableOpacity>
         </View>
         <View className="absolute right-2 top-2">
@@ -83,7 +135,10 @@ const sos = () => {
         </View>
 
         <View className="mt-6 flex items-center justify-center h-[170px]">
-          <View className="h-[150px] rounded-full w-[150px] bg-red-300 flex items-center justify-center">
+          <TouchableOpacity
+            className="h-[150px] rounded-full w-[150px] bg-red-300 flex items-center justify-center"
+            onPress={() => playSound()}
+          >
             <View className="h-[110px] rounded-full w-[110px] bg-red-400 flex items-center justify-center">
               <MaterialCommunityIcons
                 name="alarm-light"
@@ -91,7 +146,7 @@ const sos = () => {
                 color="white"
               />
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View className="mt-8">

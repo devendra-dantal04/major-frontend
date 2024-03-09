@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Button } from "react-native";
 import { useUserSelector } from "@/context/userContext";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Page = () => {
   const { isLoggedIn, user, setIsLoggedIn, setUser } = useUserSelector();
@@ -9,6 +10,7 @@ const Page = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUser(null);
+    AsyncStorage.clear();
   };
 
   const handleLogin = () => {

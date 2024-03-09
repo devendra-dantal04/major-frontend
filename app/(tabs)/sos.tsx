@@ -78,7 +78,8 @@ const sos = () => {
     const { emergency_contact } = user;
     if (isSOS) {
       setAccepted_count(0);
-      return socket.emit("SOS_Cancel", sosId, (data) => {
+      console.log(sosId);
+      return socket.emit("SOS_Cancel", (data) => {
         if (data.err) return alert(data.msg);
         const message = `I am ${data} and I am not in danger anymore.`;
         SendSMS(emergency_contact, message);

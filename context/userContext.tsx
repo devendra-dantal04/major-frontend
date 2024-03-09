@@ -112,6 +112,7 @@ export const StateContextProvider: React.FC<{ children: React.ReactNode }> = ({
             latitude: location.latitude,
             longitude: location.longitude,
           },
+          createdAt: parsedUser.createdAt,
         };
         socket.emit("USER_CONNECTED", connectedUser);
         socket.emit("SET_ACTIVE_USER", connectedUser._id);

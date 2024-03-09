@@ -65,7 +65,7 @@ const alerts = () => {
     return (
       <View
         key={`${alert.username}-${alert._id}-2`}
-        className="w-[85vw] min-h-[160px] p-6 rounded-lg mb-3 shadow-md bg-[#F9F4F3]"
+        className="w-[85vw] min-h-[160px] p-6 rounded-lg mb-3 shadow-md bg-[#FBF0E5]"
       >
         <View>
           <Text className="text-base font-semibold">
@@ -87,7 +87,7 @@ const alerts = () => {
             <>
               <TouchableOpacity
                 onPress={() => getDirection(alert.coordinates)}
-                className="p-2 flex-1 rounded-md mt-4  bg-[#DBB4AC] flex flex-row items-center justify-center"
+                className="p-2 flex-1 rounded-md mt-4  bg-[#E17F49] flex flex-row items-center justify-center"
               >
                 <Text className="text-white text-center font-semibold text-sm mr-2">
                   Get Direction
@@ -99,7 +99,7 @@ const alerts = () => {
                   setIsVisible(!isVisible);
                   setAcceptedUsers(alert.accepted_list);
                 }}
-                className="p-2 flex-1 bg-[#DBB4AC] rounded-md mt-4 flex flex-row items-center justify-center"
+                className="p-2 flex-1 bg-[#E17F49] rounded-md mt-4 flex flex-row items-center justify-center"
               >
                 <Text className="text-white text-center font-semibold text-sm mr-2">
                   Accepted Users
@@ -108,7 +108,7 @@ const alerts = () => {
             </>
           ) : (
             <TouchableOpacity
-              className="p-4 w-[100%] bg-[#DBB4AC] rounded-md mt-4 flex flex-row items-center justify-center"
+              className="p-4 w-[100%] bg-[#E17F49] rounded-md mt-4 flex flex-row items-center justify-center"
               onPress={() => {
                 acceptRequest(alert._id);
               }}

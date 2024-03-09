@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 import { Text, View } from "@/components/Themed";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,6 +19,7 @@ export default function Map() {
   const [administration, setAdministration] = useState([]);
   const [SOSDetails, setSOSDetails] = useState([]);
   const [isActiveSOS, setIsActiveSOS] = useState(null);
+  const [showGeofence, setShowGeofence] = useState(false);
 
   // variables
   const snapPoints = useMemo(() => ["50%", "90%"], []);
@@ -94,7 +95,7 @@ export default function Map() {
             }}
           >
             <Marker coordinate={location} />
-            {nearbyUser &&
+            {/* {nearbyUser &&
               nearbyUser.map((user, index) => {
                 return (
                   <Marker coordinate={user.location} key={`user-${index}`}>
@@ -103,7 +104,7 @@ export default function Map() {
                     </View>
                   </Marker>
                 );
-              })}
+              })} */}
 
             {/* {administration &&
               administration.map((admin) => {
@@ -128,6 +129,12 @@ export default function Map() {
               );
             })}
           </MapView>
+          <TouchableOpacity
+            className="absolute bottom-6 right-16 bg-white/60 backdrop-blur-md p-2 rounded-md"
+            onPress={() => setShowGeofence(!showGeofence)}
+          >
+            <Text>{showGeofence ? "Hide Geofence" : "Show Geofence"}</Text>
+          </TouchableOpacity>
         </View>
         {/* <BottomSheet
           snapPoints={["10%", "50%", "80%"]}

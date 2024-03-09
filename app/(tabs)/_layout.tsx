@@ -1,10 +1,12 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
+import { Link, Tabs, useNavigation } from "expo-router";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { Text } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -16,6 +18,7 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const navigation = useNavigation();
 
   return (
     <Tabs
@@ -54,6 +57,29 @@ export default function TabLayout() {
           // headerShown: false,
           headerTitleAlign: "center",
           tabBarIcon: ({ color }) => <TabBarIcon name="bell-o" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          // headerShown: false,
+          headerTitleAlign: "center",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="user-circle" color={color} />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="arrow-left"
+              size={24}
+              color="black" // Set your desired color
+              onPress={() => {
+                // Handle the press event, e.g., navigate back
+                navigation.goBack();
+              }}
+              style={{ marginLeft: 10 }} // Adjust the margin as needed
+            />
+          ),
         }}
       />
       <Tabs.Screen

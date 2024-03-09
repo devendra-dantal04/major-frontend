@@ -5,7 +5,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useNavigation } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef, useState } from "react";
 import { useColorScheme } from "@/components/useColorScheme";
@@ -16,6 +16,7 @@ import {
 import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import socket from "@/context/socket";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -84,6 +85,7 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const notificationListener = useRef();
   const responseListener = useRef();
+  const navigation = useNavigation();
 
   useEffect(() => {
     notificationListener.current =
@@ -94,7 +96,7 @@ function RootLayoutNav() {
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
-      }); 
+      });
 
     return () => {
       Notifications.removeNotificationSubscription(
@@ -135,7 +137,23 @@ function RootLayoutNav() {
             <Stack.Screen name="modal" options={{ presentation: "modal" }} />
             <Stack.Screen
               name="(pages)/chatbot"
-              options={{ presentation: "modal" }}
+              options={{
+                presentation: "modal",
+                headerTitle: "",
+                headerShown: false,
+                headerLeft: () => (
+                  <MaterialCommunityIcons
+                    name="arrow-left"
+                    size={24}
+                    color="black" // Set your desired color
+                    onPress={() => {
+                      // Handle the press event, e.g., navigate back
+                      navigation.goBack();
+                    }}
+                    style={{ marginLeft: 10 }} // Adjust the margin as needed
+                  />
+                ),
+              }}
             />
           </Stack>
         </ThemeProvider>

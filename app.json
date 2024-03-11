@@ -8,13 +8,11 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/personal-safety.svg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },

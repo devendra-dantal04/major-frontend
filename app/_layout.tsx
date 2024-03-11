@@ -17,6 +17,7 @@ import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import socket from "@/context/socket";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { GeoFenceProvider } from "@/context/geofenceContext";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -117,46 +118,48 @@ function RootLayoutNav() {
   return (
     <UserContextProvider>
       <StateContextProvider>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="(auth)/register"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(auth)/basic"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(pages)/geofence"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-            <Stack.Screen
-              name="(pages)/chatbot"
-              options={{
-                presentation: "modal",
-                headerTitle: "",
-                headerShown: false,
-                headerLeft: () => (
-                  <MaterialCommunityIcons
-                    name="arrow-left"
-                    size={24}
-                    color="black" // Set your desired color
-                    onPress={() => {
-                      // Handle the press event, e.g., navigate back
-                      navigation.goBack();
-                    }}
-                    style={{ marginLeft: 10 }} // Adjust the margin as needed
-                  />
-                ),
-              }}
-            />
-          </Stack>
-        </ThemeProvider>
+        <GeoFenceProvider>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="(auth)/register"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="(auth)/basic"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="(pages)/geofence"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+              <Stack.Screen
+                name="(pages)/chatbot"
+                options={{
+                  presentation: "modal",
+                  headerTitle: "",
+                  headerShown: false,
+                  headerLeft: () => (
+                    <MaterialCommunityIcons
+                      name="arrow-left"
+                      size={24}
+                      color="black" // Set your desired color
+                      onPress={() => {
+                        // Handle the press event, e.g., navigate back
+                        navigation.goBack();
+                      }}
+                      style={{ marginLeft: 10 }} // Adjust the margin as needed
+                    />
+                  ),
+                }}
+              />
+            </Stack>
+          </ThemeProvider>
+        </GeoFenceProvider>
       </StateContextProvider>
     </UserContextProvider>
   );

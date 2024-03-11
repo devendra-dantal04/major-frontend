@@ -60,7 +60,7 @@ export default function Map() {
       const response = await axios.get(
         `https://backend-6q2l.onrender.com/api/v1/sos/active_sos/${user?._id}`
       );
-      console.log(response.data.data);
+      // console.log(response.data.data);
       setSOSDetails(response.data.data);
     } catch (err) {
       console.log(err);
@@ -139,7 +139,7 @@ export default function Map() {
                 <>
                   <Circle
                     center={sos.coordinates}
-                    radius={2000}
+                    radius={1000}
                     fillColor={"rgba(255,0,0,0.1)"}
                     strokeColor={"rgba(255,0,0,0.0)"}
                     strokeWidth={0}

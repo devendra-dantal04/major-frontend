@@ -1,13 +1,19 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
 import { Text, View } from "@/components/Themed";
 import { SafeAreaView } from "react-native-safe-area-context";
-import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, {
+  Circle,
+  Marker,
+  PROVIDER_GOOGLE,
+  Polygon,
+  Polyline,
+} from "react-native-maps";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUserSelector, useStateSelector } from "@/context/userContext";
 import socket from "@/context/socket";
 import axios from "axios";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FontAwesome } from "@expo/vector-icons";
 
@@ -20,6 +26,7 @@ export default function Map() {
   const [SOSDetails, setSOSDetails] = useState([]);
   const [isActiveSOS, setIsActiveSOS] = useState(null);
   const [showGeofence, setShowGeofence] = useState(false);
+  const [geofenceData, setGeofenceData] = useState([]);
 
   // variables
   const snapPoints = useMemo(() => ["50%", "90%"], []);
@@ -48,34 +55,45 @@ export default function Map() {
   }, []);
 
   const getSOSDetails = async () => {
-    const response = await axios.get(
-      `https://backend-6q2l.onrender.com/api/v1/sos/active_sos`
-    );
-    console.log(response.data.data);
-    setSOSDetails(response.data.data);
+    try {
+      console.log(user?._id);
+      const response = await axios.get(
+        `https://backend-6q2l.onrender.com/api/v1/sos/active_sos/${user?._id}`
+      );
+      console.log(response.data.data);
+      setSOSDetails(response.data.data);
+    } catch (err) {
+      console.log(err);
+      getSOSDetails();
+    }
+  };
+
+  const getGeofenceData = async () => {
+    try {
+      // console.log(user?._id);
+      const response = await axios.get(
+        `https://backend-6q2l.onrender.com/api/v1/geofence/${user?._id}`
+      );
+      // console.log(response.data.data);
+      setGeofenceData(response.data.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
     socket.on("SEND_ADMINISTRATIONS", (data) => {
       setAdministration(data);
-      console.log(data);
       // console.log(data);
     });
 
     socket.on("Send_Notification", (data) => console.log("Data ", data));
 
     getSOSDetails();
+    getGeofenceData();
 
     socket.on("Refetch_SOS_Details", getSOSDetails);
-  }, []);
-
-  // ref
-  const bottomSheetRef = useRef<BottomSheet>(null);
-
-  // callbacks
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
+  }, [user]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -118,26 +136,53 @@ export default function Map() {
               })} */}
             {SOSDetails?.map((sos, index) => {
               return (
-                <Circle
-                  center={sos.coordinates}
-                  radius={500}
-                  fillColor={"rgba(255,0,0,0.1)"}
-                  strokeColor={"rgba(255,0,0,0.0)"}
-                  strokeWidth={0}
-                  key={index}
-                />
+                <>
+                  <Circle
+                    center={sos.coordinates}
+                    radius={2000}
+                    fillColor={"rgba(255,0,0,0.1)"}
+                    strokeColor={"rgba(255,0,0,0.0)"}
+                    strokeWidth={0}
+                    key={index}
+                  ></Circle>
+                  <Marker
+                    key={`${2 * index}${index}`}
+                    coordinate={sos.coordinates}
+                  >
+                    <View className="h-4 w-4 bg-white">
+                      <Image
+                        source={require("../../assets/user.png")}
+                        style={{ height: 200, width: 200 }}
+                      />
+                    </View>
+                  </Marker>
+                </>
               );
             })}
+
+            {showGeofence &&
+              geofenceData.map((geofence, index) => (
+                <Polygon
+                  key={index}
+                  coordinates={geofence.coordinates}
+                  fillColor="rgba(255,0,0,0.1)"
+                  strokeColor="black"
+                  strokeWidth={1}
+                ></Polygon>
+              ))}
           </MapView>
           <TouchableOpacity
             className="absolute bottom-6 right-16 bg-white/60 backdrop-blur-md p-2 rounded-md"
-            onPress={() => setShowGeofence(!showGeofence)}
+            onPress={() => {
+              setShowGeofence(!showGeofence);
+              getGeofenceData();
+            }}
           >
             <Text>{showGeofence ? "Hide Geofence" : "Show Geofence"}</Text>
           </TouchableOpacity>
         </View>
-        {/* <BottomSheet
-          snapPoints={["10%", "50%", "80%"]}
+        <BottomSheet
+          snapPoints={["3%", "50%", "80%"]}
           index={1}
           style={{ flex: 1, padding: 10 }}
         >
@@ -159,7 +204,7 @@ export default function Map() {
               </View>
             )}
           />
-        </BottomSheet> */}
+        </BottomSheet>
       </SafeAreaView>
     </GestureHandlerRootView>
   );
